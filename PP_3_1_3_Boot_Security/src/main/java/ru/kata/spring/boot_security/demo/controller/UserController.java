@@ -7,8 +7,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
+import ru.kata.spring.boot_security.demo.service.UserServiceConfig;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 //import javax.validation.Valid;
 
@@ -16,12 +18,27 @@ import javax.validation.Valid;
 @RequestMapping("/users")
 public class UserController {
 
+    private final UserServiceConfig userServiceConfig;
+
     final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+        this.userServiceConfig = new UserServiceConfig();
+
     }
+
+    /*@GetMapping("/")
+    public String homePage() {
+        return "home";
+    }
+
+    @GetMapping("/authenticated")
+    public String authenticated(Principal principal) {
+        User user = userServiceConfig.findByUsername(principal.getName());
+        return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
+    }*/
 
     @GetMapping()
     public String index(Model model) {
@@ -71,4 +88,6 @@ public class UserController {
         userService.delete(id);
         return "redirect:/users";
     }
+
+
 }

@@ -13,10 +13,12 @@ import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.List;
 
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.enabled;
+
 @Entity
 @Data
 @Table(name = "users")
-public class User /*implements UserDetails*/ {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +28,7 @@ public class User /*implements UserDetails*/ {
     @Size(min = 2, max = 10, message = "Имя в пределах от 2 до 10 знаков")
     @Pattern(regexp = "^[\\p{L}]+(?: [\\p{L}]+)*$", message = "Имя может содержать только буквы и пробелы")
     @Column(name = "name")
-    private String name;
+    private String username;
 
     @NotEmpty(message = "Фамилия не может быть пустой")
     @Size(min = 2, max = 15, message = "Фамилия в пределах от 2 до 15 знаков")
@@ -39,46 +41,48 @@ public class User /*implements UserDetails*/ {
     @Column(name = "email")
     private String email;
 
+    private String password;
+
     @ManyToMany
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles;
 
-    /*@Override
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
     }
 
     @Override
     public String getPassword() {
-        return "";
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
-    }*/
+        return enabled;
+    }
 
     /*public User() {
 

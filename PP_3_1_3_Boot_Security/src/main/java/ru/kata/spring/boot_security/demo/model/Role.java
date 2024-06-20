@@ -8,15 +8,16 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table(name = "roles")
-public class Role /*implements GrantedAuthority*/ {
+public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String name;
 
-    /*@Override
+    @Override
     public String getAuthority() {
-        return "";
-    }*/
+        //return "";
+        return name;
+    }
 }
