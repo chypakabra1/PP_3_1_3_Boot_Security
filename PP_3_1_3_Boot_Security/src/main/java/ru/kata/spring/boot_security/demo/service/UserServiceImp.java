@@ -3,7 +3,6 @@ package ru.kata.spring.boot_security.demo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.dao.UserDao;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
@@ -40,7 +39,6 @@ public class UserServiceImp implements UserService {
     @Transactional
     @Override
     public void update(User user, Long id) {
-        /*userRepository.updateUser(user, id);*/
         User user1 = userRepository.getById(id);
         user1.setUsername(user.getUsername());
         userRepository.save(user1);

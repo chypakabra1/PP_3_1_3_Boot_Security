@@ -71,6 +71,7 @@
 			<version>1.18.32</version> <!-- Укажите последнюю доступную версию -->
 			<scope>provided</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -15,30 +15,16 @@ import java.security.Principal;
 //import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/admin/users")
 public class UserController {
-
-    private final UserServiceConfig userServiceConfig;
 
     final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
-        this.userServiceConfig = new UserServiceConfig();
 
     }
-
-    /*@GetMapping("/")
-    public String homePage() {
-        return "home";
-    }
-
-    @GetMapping("/authenticated")
-    public String authenticated(Principal principal) {
-        User user = userServiceConfig.findByUsername(principal.getName());
-        return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
-    }*/
 
     @GetMapping()
     public String index(Model model) {
@@ -64,7 +50,7 @@ public class UserController {
             return "new";
         }
         userService.save(user);
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 
     @GetMapping("/edit")
@@ -80,13 +66,13 @@ public class UserController {
             return "edit";
         }
         userService.update(user, id);
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 
     @PostMapping("/delete")
     public String delete(@RequestParam("id") Long id) {
         userService.delete(id);
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 
 

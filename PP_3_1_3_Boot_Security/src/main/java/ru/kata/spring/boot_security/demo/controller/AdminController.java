@@ -27,4 +27,33 @@ public class AdminController {
         return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
     }
 
+    @GetMapping("/user")
+    public String userPage(Principal principal) {
+        User user = userServiceConfig.findByUsername(principal.getName());
+        return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
+    }
+
+    @GetMapping("/admin")
+    public String adminPage(Principal principal) {
+        User user = userServiceConfig.findByUsername(principal.getName());
+        return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
+    }
+
+    /*@GetMapping("/user")
+    public String userPage(Principal principal) {
+        //User user = userServiceConfig.findByUsername(principal.getName());
+        //return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
+        return "showuser";
+    }*/
+
+    @GetMapping("/read_profile")
+    public String pageForReadProfile() {
+        return "read profile page";
+    }
+
+    @GetMapping("/only_for_admins")
+    public String pageOnlyForAdmins() {
+        return "admins page";
+    }
+
 }

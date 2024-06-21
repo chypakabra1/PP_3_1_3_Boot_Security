@@ -12,14 +12,14 @@
 <div class="container">
     <div class="row align-items-center">
         <div th:each="user : ${users}" class="card mb-2 mr-2">
-            <form th:method="GET" th:action="@{/users/{id}(id=${user.getId()})}">
+            <form th:method="GET" th:action="@{/admin/users/{id}(id=${user.getId()})}">
                 <input type="submit" value="Просмотр"/>
                 <input type="hidden" name="id" th:value="${user.getId()}"/>
             </form>
 
             <div class="card-header" th:text="${user.getId()}"/>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item" th:text="|Имя: ${user.getName()}|"/>
+                <li class="list-group-item" th:text="|Имя: ${user.getUsername()}|"/>
                 <li class="list-group-item" th:text="|Фамилия: ${user.getLastname()}|"/>
                 <li class="list-group-item" th:text="|Почта: ${user.getEmail()}|"/>
             </ul>
@@ -30,7 +30,12 @@
 <br/>
 <hr/>
 
-<a href="/users/new">Создать нового пользователя</a>
+<a href="/admin/users/new">Создать нового пользователя</a>
+
+<form th:action="@{/logout}" method="post">
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <button type="submit">Выйти из аккаунта</button>
+</form>
 
 </body>
 </html>

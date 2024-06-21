@@ -27,7 +27,7 @@ public class User implements UserDetails {
     @NotEmpty(message = "Имя не может быть пустым")
     @Size(min = 2, max = 10, message = "Имя в пределах от 2 до 10 знаков")
     @Pattern(regexp = "^[\\p{L}]+(?: [\\p{L}]+)*$", message = "Имя может содержать только буквы и пробелы")
-    @Column(name = "name")
+    @Column(name = "username")
     private String username;
 
     @NotEmpty(message = "Фамилия не может быть пустой")
@@ -83,57 +83,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
-
-    /*public User() {
-
-    }
-
-    public User(int id, String name, String lastname, String email) {
-        this.id = id;
-        this.name = name;
-        this.lastname = lastname;
-        this.email = email;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }*/
 }
