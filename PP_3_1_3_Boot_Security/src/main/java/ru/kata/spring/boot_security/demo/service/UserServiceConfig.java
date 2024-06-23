@@ -28,7 +28,6 @@ public class UserServiceConfig implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
-
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

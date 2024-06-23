@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<form th:method="POST" th:action="@{/admin/users/edit(id=${user.getId()})}" th:object="${user}">
+<form th:method="POST" th:action="@{/admin/edit(id=${user.getId()})}" th:object="${user}">
     <label for="username">Ввод имени: </label>
     <input type="text" th:field="*{username}" id="username"/>
     <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</div>
@@ -19,6 +19,15 @@
     <input type="email" th:field="*{email}" id="email"/>
     <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
     <br/>
+    <label for="password">Ввод пароля</label>
+    <input type="password" th:field="*{password}" id="password"/>
+    <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
+    <br/>
+    <input type="hidden" name="selectedRoles" value=""/>
+    <div th:each="role : ${allRoles}">
+        <input type="checkbox" th:text="${role.getAuthority()}" th:value="${role.getId()}" th:id="'role_' + ${role}" name="selectedRoles"/>
+        <label th:for="'role_' + ${role}" ></label><br/>
+    </div>
     <input type="submit" value="Изменить"/>
     <input type="hidden" name="id" th:value="${user.getId()}"/>
 </form>

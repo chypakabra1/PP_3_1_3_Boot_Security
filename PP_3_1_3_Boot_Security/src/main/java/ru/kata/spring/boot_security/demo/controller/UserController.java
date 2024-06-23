@@ -1,79 +1,60 @@
 package ru.kata.spring.boot_security.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.UserService;
 import ru.kata.spring.boot_security.demo.service.UserServiceConfig;
 
-import javax.validation.Valid;
 import java.security.Principal;
 
-//import javax.validation.Valid;
-
-@Controller
-@RequestMapping("/admin/users")
+@RestController
+//@Controller
 public class UserController {
 
-    final UserService userService;
+    private final UserServiceConfig userServiceConfig;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-
+    public UserController(UserServiceConfig userServiceConfig) {
+        this.userServiceConfig = userServiceConfig;
     }
 
-    @GetMapping()
-    public String index(Model model) {
-        model.addAttribute("users", userService.index());
-        return "users";
+    @GetMapping("/")
+    public String homePage() {
+        return "home";
     }
 
-    @GetMapping("/{id}")
-    public String show(@RequestParam("id") Long id, Model model) {
-        model.addAttribute("user", userService.show(id));
-        return "show";
+    @GetMapping("/authenticated")
+    public String authenticated(Principal principal) {
+        User user = userServiceConfig.findByUsername(principal.getName());
+        return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
     }
 
-    @GetMapping("/new")
-    public String newUser(Model model) {
-        model.addAttribute("user", new User());
-        return "new";
+    @GetMapping("/user")
+    public String userPage(Principal principal) {
+        User user = userServiceConfig.findByUsername(principal.getName());
+        return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
     }
 
-    @PostMapping("/new")
-    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "new";
-        }
-        userService.save(user);
-        return "redirect:/admin/users";
+    /*@GetMapping("/admin")
+    public String adminPage(Principal principal) {
+        User user = userServiceConfig.findByUsername(principal.getName());
+        return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
+    }*/
+
+    /*@GetMapping("/user")
+    public String userPage(Principal principal) {
+        //User user = userServiceConfig.findByUsername(principal.getName());
+        //return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
+        return "showuser";
+    }*/
+
+    @GetMapping("/read_profile")
+    public String pageForReadProfile() {
+        return "read profile page";
     }
 
-    @GetMapping("/edit")
-    public String edit(Model model, @RequestParam("id") Long id) {
-        model.addAttribute("user", userService.show(id));
-        return "edit";
+    @GetMapping("/only_for_admins")
+    public String pageOnlyForAdmins() {
+        return "admins page";
     }
-
-    @PostMapping("/edit")
-    public String update(@ModelAttribute("user") @Valid User user,BindingResult bindingResult,
-                         @RequestParam("id") Long id) {
-        if (bindingResult.hasErrors()) {
-            return "edit";
-        }
-        userService.update(user, id);
-        return "redirect:/admin/users";
-    }
-
-    @PostMapping("/delete")
-    public String delete(@RequestParam("id") Long id) {
-        userService.delete(id);
-        return "redirect:/admin/users";
-    }
-
 
 }

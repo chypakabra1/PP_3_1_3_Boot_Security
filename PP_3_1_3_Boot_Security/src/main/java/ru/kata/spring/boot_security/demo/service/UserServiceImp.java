@@ -1,51 +1,68 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class UserServiceImp implements UserService {
+public class UserServiceImp {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public UserServiceImp(UserRepository userRepository) {
-
+    public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.userRepository = userRepository;
-
+        this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
-    @Override
     public List<User> index() {
         return userRepository.findAll();
     }
 
-    @Override
+
     public User show(Long id) {
         return userRepository.getById(id);
     }
 
     @Transactional
-    public void save(User user) {
-        userRepository.save(user);
+    public void save(User user, List<Long> selectedRoles) {
+        User savedUser = userRepository.save(user);
+        savedUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        List<Role> roles = roleRepository.findAllById(selectedRoles);
+        savedUser.setRoles(new HashSet<>(roles));
+        userRepository.save(savedUser);
     }
 
     @Transactional
-    @Override
-    public void update(User user, Long id) {
-        User user1 = userRepository.getById(id);
-        user1.setUsername(user.getUsername());
-        userRepository.save(user1);
+    public void update(User user, Long id, List<Long> selectedRoles) {
+        User savedUser = userRepository.getById(id);
+        savedUser.setUsername(user.getUsername());
+        savedUser.setLastname(user.getLastname());
+        savedUser.setEmail(user.getEmail());
+        savedUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        List<Role> roles = roleRepository.findAllById(selectedRoles);
+        savedUser.setRoles(new HashSet<>(roles));
+        userRepository.save(savedUser);
+//        User user1 = userRepository.getById(id);
+//        user1.setUsername(user.getUsername());
+//        user1.setLastname(user.getLastname());
+//        user1.setEmail(user.getEmail());
+//        userRepository.save(user1);
     }
 
     @Transactional
-    @Override
     public void delete(Long id) {
         userRepository.deleteById(id);
     }

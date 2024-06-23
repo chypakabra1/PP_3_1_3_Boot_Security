@@ -1,59 +1,81 @@
 package ru.kata.spring.boot_security.demo.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.UserServiceConfig;
+import ru.kata.spring.boot_security.demo.service.RoleService;
+import ru.kata.spring.boot_security.demo.service.UserServiceImp;
 
-import java.security.Principal;
+import javax.validation.Valid;
+import java.util.List;
 
-@RestController
+@Controller
+@RequestMapping("/admin")
 public class AdminController {
 
-    private final UserServiceConfig userServiceConfig;
+    private final UserServiceImp userServiceImp;
+    private final RoleService roleService;
 
-    public AdminController(UserServiceConfig userServiceConfig) {
-        this.userServiceConfig = userServiceConfig;
+    @Autowired
+    public AdminController(UserServiceImp userServiceImp, RoleService roleService) {
+        this.userServiceImp = userServiceImp;
+        this.roleService = roleService;
     }
 
-    @GetMapping("/")
-    public String homePage() {
-        return "home";
+    @GetMapping()
+    public String index(Model model) {
+        model.addAttribute("users", userServiceImp.index());
+        return "users";
     }
 
-    @GetMapping("/authenticated")
-    public String authenticated(Principal principal) {
-        User user = userServiceConfig.findByUsername(principal.getName());
-        return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
+    @GetMapping("/{id}")
+    public String show(@RequestParam("id") Long id, Model model) {
+        model.addAttribute("user", userServiceImp.show(id));
+        return "show";
     }
 
-    @GetMapping("/user")
-    public String userPage(Principal principal) {
-        User user = userServiceConfig.findByUsername(principal.getName());
-        return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
+    @GetMapping("/create")
+    public String newUser(Model model) {
+        model.addAttribute("user", new User());
+        model.addAttribute("allRoles", roleService.findAll());
+        return "new";
     }
 
-    @GetMapping("/admin")
-    public String adminPage(Principal principal) {
-        User user = userServiceConfig.findByUsername(principal.getName());
-        return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
+    @PostMapping("/new")
+    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
+                         @RequestParam("selectedRoles") List<Long> selectedRoles) {
+        if (bindingResult.hasErrors()) {
+            return "new";
+        }
+        userServiceImp.save(user, selectedRoles);
+        return "redirect:/admin";
     }
 
-    /*@GetMapping("/user")
-    public String userPage(Principal principal) {
-        //User user = userServiceConfig.findByUsername(principal.getName());
-        //return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
-        return "showuser";
-    }*/
-
-    @GetMapping("/read_profile")
-    public String pageForReadProfile() {
-        return "read profile page";
+    @GetMapping("/edit")
+    public String edit(Model model, @RequestParam("id") Long id) {
+        model.addAttribute("user", userServiceImp.show(id));
+        model.addAttribute("allRoles", roleService.findAll());
+        return "edit";
     }
 
-    @GetMapping("/only_for_admins")
-    public String pageOnlyForAdmins() {
-        return "admins page";
+    @PostMapping("/edit")
+    public String update(@ModelAttribute("user") @Valid User user,BindingResult bindingResult,
+                         @RequestParam("id") Long id, @RequestParam("selectedRoles") List<Long> selectedRoles) {
+        if (bindingResult.hasErrors()) {
+            return "edit";
+        }
+        userServiceImp.update(user, id, selectedRoles);
+        return "redirect:/admin";
     }
+
+    @PostMapping("/delete")
+    public String delete(@RequestParam("id") Long id) {
+        userServiceImp.delete(id);
+        return "redirect:/admin";
+    }
+
 
 }
