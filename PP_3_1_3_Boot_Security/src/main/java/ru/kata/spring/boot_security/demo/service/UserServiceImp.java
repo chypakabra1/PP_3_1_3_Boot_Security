@@ -11,6 +11,7 @@ import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,11 +30,6 @@ public class UserServiceImp {
 
     public List<User> index() {
         return userRepository.findAll();
-    }
-
-
-    public User show(Long id) {
-        return userRepository.getById(id);
     }
 
     @Transactional
@@ -55,15 +51,19 @@ public class UserServiceImp {
         List<Role> roles = roleRepository.findAllById(selectedRoles);
         savedUser.setRoles(new HashSet<>(roles));
         userRepository.save(savedUser);
-//        User user1 = userRepository.getById(id);
-//        user1.setUsername(user.getUsername());
-//        user1.setLastname(user.getLastname());
-//        user1.setEmail(user.getEmail());
-//        userRepository.save(user1);
     }
 
     @Transactional
     public void delete(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public User findById(Long id) {
+        return userRepository.getById(id);
+    }
+
+    public Optional<User> findByUsername(String name) {
+        Optional<User> user = userRepository.findByUsername(name);
+        return user;
     }
 }

@@ -33,7 +33,7 @@ public class AdminController {
 
     @GetMapping("/{id}")
     public String show(@RequestParam("id") Long id, Model model) {
-        model.addAttribute("user", userServiceImp.show(id));
+        model.addAttribute("user", userServiceImp.findById(id));
         return "show";
     }
 
@@ -56,7 +56,7 @@ public class AdminController {
 
     @GetMapping("/edit")
     public String edit(Model model, @RequestParam("id") Long id) {
-        model.addAttribute("user", userServiceImp.show(id));
+        model.addAttribute("user", userServiceImp.findById(id));
         model.addAttribute("allRoles", roleService.findAll());
         return "edit";
     }
