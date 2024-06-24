@@ -28,13 +28,10 @@ public class UserServiceConfig implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isEmpty()) {
-            throw new UsernameNotFoundException(String.format("No user found with username '%s'", email));
-        }
-        User user1 = user.get();
-        return new org.springframework.security.core.userdetails.User(user1.getEmail(),user1.getPassword(),
-                mapRolesToAuthorities(user1.getRoles()));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user found with username '%s'", email)));
+
+        return user;
     }
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
